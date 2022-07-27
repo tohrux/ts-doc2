@@ -1,12 +1,14 @@
 {
   "name": "ts-doc2",
-  "version": "1.0.14",
+  "version": "1.0.19",
   "description": "Generate api doc by decorator",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc -p build.tsconfig.json --outDir .",
-    "build:view":"cd src/view && npm run build",
-    "echo":"echo test"
+    "build": "tsc -p build.tsconfig.json --outDir ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tohrux/ts-doc2"
   },
   "keywords": [
     "typescript",
@@ -30,7 +32,6 @@
     "commander": "^9.4.0",
     "prettier": "^2.7.1",
     "ts-morph": "^14.0.0",
-    "ts-node": "^10.8.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
     "typescript-json-schema": "^0.53.0"
