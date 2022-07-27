@@ -1,0 +1,5 @@
+{
+  "tsConfigFilePath": "./tsconfig.json",
+  "scanDir": ["demo/controller/*.ts"],
+  "outFilePath": "src/view/meta.ts"
+}
