@@ -1,6 +1,6 @@
 {
   "name": "ts-doc2",
-  "version": "1.0.19",
+  "version": "1.0.21",
   "description": "Generate api doc by decorator",
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -16,12 +16,11 @@
     "doc"
   ],
   "files": [
-    "/src/genSchema",
-    "common*",
+    "/gen",
     "index.js"
   ],
   "bin": {
-    "ts-doc2": "src/index.js"
+    "ts-doc2": "gen/index.js"
   },
   "main": "index.js",
   "author": "d1vaainiyo@gmail.com",

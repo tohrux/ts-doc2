@@ -12,14 +12,14 @@ import {
   genNode,
   prettierFile,
   deletejsDocByName,
-} from './genSchema/utils'
-import { collectTypeDeps } from './genSchema/collect'
+} from './gen/utils'
+import { collectTypeDeps } from './gen/collect'
 import {
   jsonSchema2json,
   ISchema,
   extractSchema,
   paramsHandler,
-} from './genSchema/jsonSchema2json'
+} from './gen/jsonSchema2json'
 import { Command } from 'commander'
 
 const args = process.argv
