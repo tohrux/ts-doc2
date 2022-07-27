@@ -46,9 +46,8 @@ export function snakeToCamel(name: string): string {
     return letter.toUpperCase()
   })
 }
-
+//jsonSchema转为json
 export function jsonSchema2json(schema: ISchema, origin = false) {
-  // log(schema)
   let prj = new Project({
     manipulationSettings: { indentationText: IndentationText.FourSpaces },
   })
@@ -60,43 +59,38 @@ export function jsonSchema2json(schema: ISchema, origin = false) {
   let root = variableStatement.getFirstDescendantByKind(
     SyntaxKind.ObjectLiteralExpression
   )
-  log(schema)
+
   gen(schema, root, origin)
-  const value = root
+  
+  return root
     ?.getFirstChildByKind(SyntaxKind.PropertyAssignment)
     ?.getFirstChildByKind(SyntaxKind.ObjectLiteralExpression)
-
-  // sf.saveSync()
-
-  return value
 }
 
+//递归生成元数据
 function gen(
   _schema: ISchema,
   node: ObjectLiteralExpression | undefined,
   origin: boolean,
-  keyName = 'value',
-  toCamel?: boolean
+  keyName = 'value'
 ) {
   if (!node) return
   const format = origin ? getOriginValue : getDefaulValue
   const type = _schema.type
-  if (_schema.id === 'toCamelCase') {
-    toCamel = true
-  }
+  //对基本类型的处理
   switch (type) {
     case 'boolean':
     case 'string':
     case 'number':
       node?.addPropertyAssignment({
-        name: toCamel ? snakeToCamel(keyName) : keyName,
+        name: keyName,
         initializer: `${format(_schema.type)}`,
         leadingTrivia: descriptionHandler(_schema.description),
       })
       break
     case 'object':
       node?.addPropertyAssignment({
-        name: toCamel ? snakeToCamel(keyName) : keyName,
+        name: keyName,
         initializer: `{}`,
         leadingTrivia: descriptionHandler(_schema.description),
       })
@@ -110,7 +104,7 @@ function gen(
         )
       }) as ObjectLiteralExpression
       for (let key in _schema.properties) {
-        gen(_schema.properties[key], objectLiteral, origin, key, toCamel)
+        gen(_schema.properties[key], objectLiteral, origin, key)
       }
       break
     case 'array':
@@ -139,8 +133,7 @@ function gen(
                 v.properties[key],
                 list?.addElement('{}') as ObjectLiteralExpression,
                 origin,
-                key,
-                toCamel
+                key
               )
             }
           }
@@ -165,13 +158,7 @@ function gen(
           )
         }) as ObjectLiteralExpression
         for (let key in _schema.items.properties) {
-          gen(
-            _schema.items.properties[key],
-            objectLiteral,
-            origin,
-            key,
-            toCamel
-          )
+          gen(_schema.items.properties[key], objectLiteral, origin, key)
         }
       } else if (
         //number[]

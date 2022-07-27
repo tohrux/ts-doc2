@@ -78,16 +78,12 @@ export function genNode(
   name: string,
   typeDeclaration: ITCDeclaration
 ) {
-  const T_KEYS_TO_CAMEL_CASE = 'TKeysToCamelCase'
-  const camelReg = new RegExp(`${T_KEYS_TO_CAMEL_CASE}<((.|\n|)*)>`)
-  // console.log(name, typeDeclaration.getKindName)
   //将typeDeclaration转成InterfaceDeclaration
   if (
     (Node.isTypeAliasDeclaration(typeDeclaration) &&
       isTypeLiteral(typeDeclaration)) ||
     Node.isInterfaceDeclaration(typeDeclaration)
   ) {
-    // console.log(name, 1)
     let targetDeclaration: ITCDeclaration | TypeLiteralNode
     if (!Node.isInterfaceDeclaration(typeDeclaration)) {
       targetDeclaration =
@@ -102,33 +98,14 @@ export function genNode(
     })
 
     const properties = targetDeclaration.getProperties().map((v) => {
-      //对TKeysToCamelCase进行unwrap
       let typeText = v.getTypeNode()?.getText().trim()
+      //将所有单行注释转为多行注释,因为tsj只能识别多行注释
       let formatedTypeText = typeText?.replace(
         /\/\/((.)*)\n/g,
         `\n/**\n * $1\n*/\n`
       )
       let type = formatedTypeText
       let leadingTrivia = v.getLeadingCommentRanges()?.[0]?.getText()
-
-      if (camelReg.test(typeText || '')) {
-        type = typeText?.replace(camelReg, '$1')
-        let multyComments = v.getJsDocs()?.[0]?.getCommentText()
-        //多行注释
-        if (multyComments) {
-          leadingTrivia = multyLine2MultyComments(
-            multyComments + `\n@TJS-id ${T_KEYS_TO_CAMEL_CASE}`
-          )
-          //单行注释
-        } else if (leadingTrivia) {
-          let commentText = leadingTrivia.slice(2).trim()
-          leadingTrivia = multyLine2MultyComments(
-            commentText + `\n@TJS-id ${T_KEYS_TO_CAMEL_CASE}`
-          )
-        } else {
-          leadingTrivia = multyLine2MultyComments('\n@TJS-id toCamelCase')
-        }
-      }
 
       return {
         name: v.getName(),
@@ -141,40 +118,17 @@ export function genNode(
       name,
       properties,
       typeParameters,
-      leadingTrivia: `
-      /**
-       * interface
-       */
-      `,
     })
 
     inter.setIsExported(true)
-  } else if (
-    Node.isTypeAliasDeclaration(typeDeclaration) &&
-    !isTypeLiteral(typeDeclaration) &&
-    typeDeclaration.getName() !== T_KEYS_TO_CAMEL_CASE &&
-    camelReg.test(typeDeclaration.getTypeNodeOrThrow().getText())
-  ) {
-    let typeText = typeDeclaration.getTypeNodeOrThrow().getText()
-    const typeParameters = typeDeclaration.getTypeParameters().map((v) => {
-      return {
-        name: v.getText(),
-      }
-    })
-    const leadingTrivia = multyLine2MultyComments('@TJS-id toCamelCase\nhello')
-    console.log(typeDeclaration.getName())
-    typeText = typeText.replace(camelReg, '$1')
-    namespace.addTypeAlias({
-      name: typeDeclaration.getName(),
-      typeParameters,
-      type: typeText,
-      leadingTrivia,
-    })
   } else {
     addNode(namespace, typeDeclaration)
   }
 }
 
+
+
+// prettier 相关,用于格式化最后输出的meta.ts
 const defaultPrettierOptions = {
   parser: 'json',
   singleQuote: true,
@@ -185,23 +139,8 @@ const defaultPrettierOptions = {
   endOfLine: 'lf',
   bracketSpacing: false,
   arrowFunctionParentheses: 'avoid',
-  overrides: [
-    {
-      files: '.prettierrc',
-      options: {
-        parser: 'json',
-      },
-    },
-    {
-      files: 'document.ejs',
-      options: {
-        parser: 'html',
-      },
-    },
-  ],
 }
 
-// 格式化美化文件
 type prettierFileType = (content: string) => string
 export const prettierFile: prettierFileType = (content: string) => {
   let result = content

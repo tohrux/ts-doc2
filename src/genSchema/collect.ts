@@ -1,5 +1,5 @@
 /**
- * 以下方法收集自 https://github.com/hughfenghen/ts-rpc
+ * 以下方法源自 https://github.com/hughfenghen/ts-rpc
  */
 
 import {

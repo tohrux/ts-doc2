@@ -71,6 +71,7 @@ export async function genJson() {
 
   let collector = project.createSourceFile(
     'type-collections.ts',
+    //取消最外层Promise的包裹,避免解析失败
     'type $unwrapPromise<T> = T extends Promise<infer U> ? U : T',
     {
       overwrite: true,
@@ -128,7 +129,7 @@ export async function genJson() {
         [...methodsReturnTypesNodes, ...paramsTypesNodes.flat(2)],
         project
       )
-
+      //收集类型
       typeDeclaraions.forEach((v) => {
         const name = v.getName()
         if (name) genNode(classNS, name, v as ClassDeclaration)
@@ -209,7 +210,9 @@ export async function genJson() {
   const prj = new Project({
     manipulationSettings: { indentationText: IndentationText.TwoSpaces },
   })
-  const sf = prj.createSourceFile(outFilePath, '/* eslint-disable */', { overwrite: true })
+  const sf = prj.createSourceFile(outFilePath, '/* eslint-disable */', {
+    overwrite: true,
+  })
   const statement = sf.addVariableStatement({
     declarations: [
       {
