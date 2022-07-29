@@ -1,6 +1,6 @@
 {
   "name": "ts-doc2",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Generate api doc by annotations",
   "scripts": {
     "dev": "nodemon src/index.ts",
