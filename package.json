@@ -1,6 +1,6 @@
 {
   "name": "ts-doc2",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Generate api doc by decorator",
   "scripts": {
     "dev": "nodemon src/index.ts",
