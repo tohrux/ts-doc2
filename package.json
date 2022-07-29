@@ -1,7 +1,7 @@
 {
   "name": "ts-doc2",
-  "version": "1.0.24",
-  "description": "Generate api doc by decorator",
+  "version": "1.0.25",
+  "description": "Generate api doc by annotations",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc -p build.tsconfig.json --outDir ."
